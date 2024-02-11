@@ -16,14 +16,12 @@ main {
 }
 
 #tabuleiro {
-    margin: 5vh 5vw;
     display: flex;
     flex-direction: column;
 }
 
 #tabuleiro div {
     display: flex;
-    justify-content: center;
 }
 
 
@@ -94,17 +92,10 @@ aside {
     background-color: grey;
 }
 
-@media screen and not (min-width: 1900px) {
+@media screen and not (min-width: 1400px) {
     #tabuleiro div button {
         width: 48px;
         height: 48px;
     }
 }
 
-
-@media screen and not (min-width: 1400px) {
-    #tabuleiro div button {
-        width: 32px;
-        height: 32px;
-    }
-}

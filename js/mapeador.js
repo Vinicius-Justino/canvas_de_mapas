@@ -37,9 +37,9 @@ function mostraSecao(secao) {
     // Lista por secao quais os itens que devem ser procurados
     let itens = [];
     if (secao == 'paredes') {
-        itens = ["barro", "deserto", "masmorra", "vidro"];
+        itens = ["barro", "deserto", "ferro", "ferrugem", "masmorra", "tijolo","vidro"];
     } else if (secao =='chao') {
-        itens = ["agua", "areia", "grama", "madeira1", "madeira2", "terra", "tijolo1", "tijolo2", "tijolo3"];
+        itens = ["agua", "areia", "ferro1", "ferro2", "grama", "madeira1", "madeira2", "terra", "tijolo1", "tijolo2", "tijolo3"];
     } else {
         itens = [];
     }
