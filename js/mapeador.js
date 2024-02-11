@@ -41,7 +41,7 @@ function mostraSecao(secao) {
     } else if (secao =='chao') {
         itens = ["agua", "areia", "ferro1", "ferro2", "grama", "madeira1", "madeira2", "terra", "tijolo1", "tijolo2", "tijolo3"];
     } else {
-        itens = [];
+        itens = ["barril", "bau", "cadeira1", "cadeira2", "caixao", "cama", "diamante", "dinheiro", "espinhos1", "espinhos2", "espinhos3", "lapide", "mesa1", "mesa2", "ossos", "placa", "trouxa"];
     }
 
     for (let opcao of itens) {
@@ -57,8 +57,13 @@ function mostraSecao(secao) {
 
         if (secao == "paredes") {
             img_card.src = `images/${secao}/amostras/${opcao}.jpg`;
-        } else {
+        } else if (secao == "chao") {
             img_card.src = `images/${secao}/${opcao}.jpg`;
+        } else {
+            img_card.style.width = "64px";
+            img_card.style.height = "64px";
+
+            img_card.src = `images/${secao}/${opcao}.png`;
         }
         
 
@@ -74,17 +79,36 @@ function mostraSecao(secao) {
 }
 
 function colocaTile(posicao) {
-    // Marca o quadrado com a tile que ele vai receber
-    document.getElementById(posicao).name = tile_atual;
     tipo_tile = tile_atual.split("-")[0];
     tema_tile = tile_atual.split("-")[1];
 
-    // Coloca a tile caso ela seja chao ou vazio
+    // Nao permite que um objeto seja colocado em uma parede
+    if (tipo_tile == "objetos" && document.getElementById(posicao).name.split("-")[0] == "paredes") {
+        return;
+    }
+
+    // Marca o quadrado com a tile que ele vai receber
+    document.getElementById(posicao).name = tile_atual;
+
+    // Coloca a tile caso
     if (tipo_tile == "vazio") {
+        document.getElementById(posicao).textContent = "";
         document.getElementById(posicao).style.backgroundImage = "";
-    } else if (tipo_tile != "paredes") {
+    } else if (tipo_tile == "chao") {
         document.getElementById(posicao).style.backgroundImage = `url(./images/${tipo_tile}/${tema_tile}.jpg)`;
+    } else if (tipo_tile == "objetos") {
+        // Limite de 4 objetos por tile
+        if (document.getElementById(posicao).children.length > 3) {
+            return;
+        }
+
+        // Cria uma img cara colocar o objeto sobre a tile
+        let espaco_img = document.createElement("img");
+        espaco_img.src = `images/${tipo_tile}/${tema_tile}.png`;
+        document.getElementById(posicao).appendChild(espaco_img);
     } else {
+        document.getElementById(posicao).textContent = "";
+
         let n_tile = calculaNumeroTileParede(posicao);
         document.getElementById(posicao).style.backgroundImage = `url(./images/${tipo_tile}/${tema_tile}/tile${n_tile}.jpg)`;
     }

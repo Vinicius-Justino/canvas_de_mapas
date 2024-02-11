@@ -31,7 +31,17 @@ main {
     flex-shrink: 0;
     background-size: cover;
 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+
     border: 1px black solid;
+}
+
+#tabuleiro div button img {
+    width: 32px;
+    height: 32px;
 }
 
 aside {
@@ -96,6 +106,11 @@ aside {
     #tabuleiro div button {
         width: 48px;
         height: 48px;
+    }
+
+    #tabuleiro div button img {
+        width: 24px;
+        height: 24px;
     }
 }
 
