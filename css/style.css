@@ -1,0 +1,110 @@
+* {
+    margin: 0px;
+    padding: 0px;
+
+    box-sizing: content-box;
+}
+
+body {
+    display: flex;
+}
+
+main {
+    width: 75vw;
+    height: 100vh;
+    overflow: scroll;
+}
+
+#tabuleiro {
+    margin: 5vh 5vw;
+    display: flex;
+    flex-direction: column;
+}
+
+#tabuleiro div {
+    display: flex;
+    justify-content: center;
+}
+
+
+#tabuleiro div button {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    background-size: cover;
+
+    border: 1px black solid;
+}
+
+aside {
+    width: 25vw;
+    height: 100vh;
+    overflow: scroll;
+
+    border-left: 1px black solid;
+}
+
+#opcoes {
+    width: 100%;
+    padding: 1vh 0vw;
+
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+
+    border-bottom: 1px black solid;
+    
+}
+
+#opcoes button {
+    min-width: 80px;
+
+    width: 40%;
+    height: 50px;
+    margin: 1vh 0vw;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#menu {
+    width: 100%;
+    padding: 1vh 0vw;
+
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.card {
+    width: 138px;
+    height: 159px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+
+    border-style: none;
+    background-color: white;
+}
+
+.card:hover {
+    background-color: grey;
+}
+
+@media screen and not (min-width: 1900px) {
+    #tabuleiro div button {
+        width: 48px;
+        height: 48px;
+    }
+}
+
+
+@media screen and not (min-width: 1400px) {
+    #tabuleiro div button {
+        width: 32px;
+        height: 32px;
+    }
+}
