@@ -40,6 +40,8 @@ function mostraSecao(secao) {
         itens = ["barro", "deserto", "ferro", "ferrugem", "masmorra", "tijolo","vidro"];
     } else if (secao =='chao') {
         itens = ["agua", "areia", "ferro1", "ferro2", "grama", "madeira1", "madeira2", "terra", "tijolo1", "tijolo2", "tijolo3"];
+    } else if (secao == 'portas') {
+        itens = ["ferro1", "ferro2", "grade1", "grade2", "grade3", "grade4", "madeira1", "madeira2", "portal1", "portal2", "portal3", "portal4"];
     } else {
         itens = ["barril", "bau", "cadeira1", "cadeira2", "caixao", "cama", "diamante", "dinheiro", "espinhos1", "espinhos2", "espinhos3", "lapide", "mesa1", "mesa2", "ossos", "placa", "trouxa"];
     }
@@ -87,24 +89,38 @@ function colocaTile(posicao) {
         return;
     }
 
-    // Marca o quadrado com a tile que ele vai receber
+    // Nomeia o quadrado com a tile que ele vai receber
     document.getElementById(posicao).name = tile_atual;
 
-    // Coloca a tile caso
+    // Coloca a tile
     if (tipo_tile == "vazio") {
         document.getElementById(posicao).textContent = "";
         document.getElementById(posicao).style.backgroundImage = "";
     } else if (tipo_tile == "chao") {
         document.getElementById(posicao).style.backgroundImage = `url(./images/${tipo_tile}/${tema_tile}.jpg)`;
     } else if (tipo_tile == "objetos") {
-        // Limite de 4 objetos por tile
-        if (document.getElementById(posicao).children.length > 3) {
-            return;
+        // Limite de 4 objetos por tile e remove portas para colocar objetos
+        if (document.getElementById(posicao).children.length > 0) {
+            if (document.getElementById(posicao).children.length > 3) {
+                return;
+            } else if (document.getElementById(posicao).firstChild.className == "porta") {
+                document.getElementById(posicao).textContent = "";
+            }
         }
 
         // Cria uma img cara colocar o objeto sobre a tile
         let espaco_img = document.createElement("img");
         espaco_img.src = `images/${tipo_tile}/${tema_tile}.png`;
+
+        document.getElementById(posicao).appendChild(espaco_img);
+    } else if (tipo_tile == "portas") {
+        document.getElementById(posicao).textContent = "";
+
+        // Cria uma img cara colocar a porta sobre a tile
+        let espaco_img = document.createElement("img");
+        espaco_img.src = `images/${tipo_tile}/${tema_tile}.png`;
+        espaco_img.className = "porta";
+
         document.getElementById(posicao).appendChild(espaco_img);
     } else {
         document.getElementById(posicao).textContent = "";
