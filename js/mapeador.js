@@ -3,6 +3,7 @@ function geraTabuleiro() {
     for (let n_linha = 20; n_linha >= 1; n_linha--) {
         // Cria 20 linhas enumeradas de 20 a 1
         let linha = document.createElement("div");
+        linha.id = `y${n_linha}`;
 
         for (let n_coluna = 1; n_coluna <= 20; n_coluna++) {
             // Cria 20 colunas para cada linha, enumeradas de 1 a 20
@@ -20,6 +21,51 @@ function geraTabuleiro() {
 
         document.querySelector("#tabuleiro").appendChild(linha);
     }
+}
+
+// Redimensiona o tabuleiro para enquadra-lo na tela
+function modoVisualizacao() {
+    // Esconde o menu de tiles
+    document.querySelector("aside").style.display = "none";
+    document.querySelector("main").style.width = "100vw";
+    
+
+    // Redimensiona cada quadrado do tabuleiro
+    for (let y = 20; y >= 1; y--) {
+        document.getElementById(`y${y}`).style.justifyContent = "center";
+
+        for (let x = 1; x <= 20; x++) {
+            document.getElementById(`y${y}x${x}`).style.width = "4.5vh";
+            document.getElementById(`y${y}x${x}`).style.height = "4.5vh";
+        }
+    }
+
+    // Troca o botao
+    document.querySelector("#botao-modo-tela").removeEventListener("click", modoVisualizacao);
+    document.querySelector("#botao-modo-tela").addEventListener("click", modoDesenho);
+    document.querySelector("#botao-modo-tela").innerText = "Modo desenho";
+}
+
+// Retorna toda a interface para o estado inicial
+function modoDesenho() {
+    // Mostra o meno de tiles
+    document.querySelector("main").style.width = "";
+    document.querySelector("aside").style.display = "";
+
+    // Redimensiona cada quadrado do tabuleiro
+    for (let y = 20; y >= 1; y--) {
+        document.getElementById(`y${y}`).style.justifyContent = "";
+
+        for (let x = 1; x <= 20; x++) {
+            document.getElementById(`y${y}x${x}`).style.width = "";
+            document.getElementById(`y${y}x${x}`).style.height = "";
+        }
+    }
+
+    // Troca o botao
+    document.querySelector("#botao-modo-tela").removeEventListener("click", modoDesenho);
+    document.querySelector("#botao-modo-tela").addEventListener("click", modoVisualizacao);
+    document.querySelector("#botao-modo-tela").innerText = "Modo visualização";
 }
 
 // Tile sendo utilizada pelo usuario
