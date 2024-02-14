@@ -27,6 +27,49 @@ let tile_atual = "vazio-vazio";
 
 function modoBorracha() {
     tile_atual = "vazio-vazio";
+
+    document.querySelector("#botao-borracha").style.backgroundColor = "#9999FF";
+}
+
+let modo_area = false;
+let quadrados = ["", ""];
+function modoArea() {
+    // Liga e desliga o modo area
+    modo_area = !modo_area;
+    if (!modo_area) {
+        document.querySelector("#botao-area").style.backgroundColor = "";
+
+        return;
+    }
+
+    document.querySelector("#botao-area").style.backgroundColor = "#9999FF";
+
+    // Apenas funciona com tiles de chao ou a borracha
+    if (!["chao", "vazio"].includes(tile_atual.split("-")[0])) {
+        tile_atual = "vazio-vazio";
+    }
+
+    // Mostra uma explicacao do modo area
+    document.querySelector("#menu").textContent = "";
+
+    let area_explicacao = document.createElement("section");
+    area_explicacao.style.width = "80%";
+
+    let titulo = document.createElement("h2");
+    titulo.textContent = "Modo Área:";
+
+    let explicacao = document.createElement("p");
+    explicacao.textContent = "Selecione uma tile de chão ou a borracha e 2 quadrados para preencher toda a área entre eles.";
+
+    let mostra_tile_atual = document.createElement("p");
+    mostra_tile_atual.textContent = `Tile selecionada: ${tile_atual.split("-")[1]}`;
+
+    area_explicacao.appendChild(titulo);
+    area_explicacao.appendChild(explicacao);
+    area_explicacao.appendChild(document.createElement("br"));
+    area_explicacao.appendChild(mostra_tile_atual);
+    
+    document.querySelector("#menu").appendChild(area_explicacao);
 }
 
 // Alterna entre as 3 secoes de tiles do menu
@@ -51,8 +94,20 @@ function mostraSecao(secao) {
         let card = document.createElement("button");
         card.className = "card";
 
-        // Troca a tile atual quando o card e clicado
-        card.addEventListener("click", function() {tile_atual = secao + '-' + opcao;});
+        // Troca a tile atual quando o card for clicado
+        card.addEventListener("click", function() {
+            tile_atual = secao + '-' + opcao;
+            
+            // Apaga o botao do modo borracha
+            document.querySelector("#botao-borracha").style.backgroundColor = "";
+
+            // Desativa o modo area se a tile nao for um chao
+            if (secao != "chao") {
+                modo_area = false;
+
+                document.querySelector("#botao-area").style.backgroundColor = "";
+            }
+        });
 
         // Imagem do card
         let img_card = document.createElement("img");
@@ -81,6 +136,12 @@ function mostraSecao(secao) {
 }
 
 function colocaTile(posicao) {
+    if (modo_area) {
+        preencheArea(posicao);
+
+        return;
+    }
+
     tipo_tile = tile_atual.split("-")[0];
     tema_tile = tile_atual.split("-")[1];
 
@@ -108,7 +169,7 @@ function colocaTile(posicao) {
             }
         }
 
-        // Cria uma img cara colocar o objeto sobre a tile
+        // Cria uma img para colocar o objeto sobre a tile
         let espaco_img = document.createElement("img");
         espaco_img.src = `images/${tipo_tile}/${tema_tile}.png`;
 
@@ -132,6 +193,48 @@ function colocaTile(posicao) {
     atualizaParedes(posicao);
 }
 
+// Preenche toda a area entre 2 quadrados
+function preencheArea(posicao) {
+    // Precisa de 2 quadrados para funcionar
+    quadrados[quadrados.indexOf("")] = posicao;
+    if (quadrados.indexOf("") == 1) {
+        return;
+    }
+
+    // Extrai as coordenadas das 2 posicoes
+    let coordenadas_quadrado1 = extraiCoordenadas(quadrados[0]);
+    let coordenadas_quadrado2 = extraiCoordenadas(quadrados[1]);
+
+    // Define os vertices da area
+    let min_y = Math.min(coordenadas_quadrado1[0], coordenadas_quadrado2[0]);
+    let max_y = Math.max(coordenadas_quadrado1[0], coordenadas_quadrado2[0]);
+
+    let min_x = Math.min(coordenadas_quadrado1[1], coordenadas_quadrado2[1]);
+    let max_x = Math.max(coordenadas_quadrado1[1], coordenadas_quadrado2[1]);
+
+    // Analisa cada quadrado dentro da area
+    for (let y = max_y; y >= min_y; y--) {
+        for (let x = min_x; x <= max_x; x++) {
+            let analisada_id = `y${y}x${x}`;
+
+            // Apenas apaga/altera a tile se nao for uma parede
+            if (document.getElementById(analisada_id).name.split("-")[0] != "paredes") {
+                let tema_tile = tile_atual.split("-")[1];
+
+                if (tile_atual == "vazio-vazio") {
+                    document.getElementById(analisada_id).textContent = "";
+                    document.getElementById(analisada_id).style.backgroundImage = "";
+                } else {
+                    document.getElementById(analisada_id).style.backgroundImage = `url(./images/chao/${tema_tile}.jpg)`;
+                }
+            }
+        }
+    }
+
+    // Limpa o array quadrados
+    quadrados = ["", ""];
+}
+
 function calculaNumeroTileParede(posicao) {
     // Inicializa o numero da tile
     let numero = 0b00000000;
@@ -141,25 +244,14 @@ function calculaNumeroTileParede(posicao) {
     let indice = 0;
 
     // Extrai as coordenadas da tile baseado no id
-    let coordenadas = ["", ""];
-    let passou_x = 0;
-    for (let caracter of posicao.substring(1)) {
-        if (caracter == "x") {
-            passou_x = 1;
-        } else {
-            coordenadas[passou_x] += caracter;
-        }
-    }
-
-    let tile_y = parseInt(coordenadas[0]);
-    let tile_x = parseInt(coordenadas[1]);
+    let coordenadas = extraiCoordenadas(posicao);
 
     // Analisa as tiles ao redor do alvo
     for (let i = 1; i >= -1; i--) {
-        let analisada_y = tile_y + i;
+        let analisada_y = coordenadas[0] + i;
 
         for (let j = -1; j <= 1; j++) {
-            let analisada_x = tile_x + j;
+            let analisada_x = coordenadas[1] + j;
             
             // Verifica se as coordenadas y e x analisadas estao dentro do grid
             if (1 <= analisada_y && analisada_y <= 20 && 1 <= analisada_x && analisada_x <= 20) {
@@ -186,25 +278,14 @@ function calculaNumeroTileParede(posicao) {
 
 function atualizaParedes(posicao) {
     // Extrai as coordenadas da tile baseado no id
-    let coordenadas = ["", ""];
-    let passou_x = 0;
-    for (let caracter of posicao.substring(1)) {
-        if (caracter == "x") {
-            passou_x = 1;
-        } else {
-            coordenadas[passou_x] += caracter;
-        }
-    }
-
-    let tile_y = parseInt(coordenadas[0]);
-    let tile_x = parseInt(coordenadas[1]);
+    let coordenadas = extraiCoordenadas(posicao);
 
     // Reanalisa as tiles ao redor do alvo
     for (let i = 1; i >= -1; i--) {
-        let analisada_y = tile_y + i;
+        let analisada_y = coordenadas[0] + i;
 
         for (let j = -1; j <= 1; j++) {
-            let analisada_x = tile_x + j;
+            let analisada_x = coordenadas[1] + j;
             
             // Verifica se as coordenadas y e x analisadas estao dentro do grid
             if (1 <= analisada_y && analisada_y <= 20 && 1 <= analisada_x && analisada_x <= 20) {
@@ -219,4 +300,19 @@ function atualizaParedes(posicao) {
             }
         }
     }
+}
+
+// Pega o id de uma tile e converte em coordenadas
+function extraiCoordenadas(posicao) {
+    let coords = ["", ""];
+    let passou_x = 0;
+    for (let caracter of posicao.substring(1)) {
+        if (caracter == "x") {
+            passou_x = 1;
+        } else {
+            coords[passou_x] += caracter;
+        }
+    }
+
+    return [parseInt(coords[0]), parseInt(coords[1])];
 }
