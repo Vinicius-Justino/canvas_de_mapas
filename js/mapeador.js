@@ -192,7 +192,7 @@ function colocaTile(posicao) {
     tema_tile = tile_atual.split("-")[1];
 
     // Nao permite que um objeto ou porta seja colocado em uma parede
-    if (["objetos", "portas"].contains(tipo_tile) && document.getElementById(posicao).name.split("-")[0] == "paredes") {
+    if (["objetos", "portas"].includes(tipo_tile) && document.getElementById(posicao).name.split("-")[0] == "paredes") {
         return;
     }
 
